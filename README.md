@@ -23,7 +23,7 @@ provider "aws" {
 }
 
 module "cloudfront_s3_cdn" {
-  source            = "mmsg/cloudfront-s3" 
+  source            = "aolvictim/cloudfront-s3/aws" 
   aws_region        = "us-west-2"
   bucket_name       = "MY-APP-BUCKET"
   files_folder_path = "../../dist" # Path to the dist folder
