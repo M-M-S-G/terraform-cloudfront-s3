@@ -157,3 +157,12 @@ resource "aws_route53_record" "route53_record" {
     evaluate_target_health = false
   }
 }
+
+resource "null_resource" "invalidate_cf_cache" {
+  provisioner "local-exec" {
+    command = "aws cloudfront create-invalidation --distribution-id ${s3_distribution.id} --paths '/*'"
+  }
+  triggers = {
+    website_version_changed = aws_s3_object.object.version_id
+  }
+}
