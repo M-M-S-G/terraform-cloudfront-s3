@@ -1,6 +1,6 @@
 # terraform-cloudfront-s3
 
-We deploy a lot of Single Page Applications (mainlyEmber.js) written in Javascript. This module makes it easier to deploy changes to Cloudfront + S3.
+We deploy a lot of Single Page Applications (mainly Ember.js) written in Javascript. This module makes it easier to deploy changes to Cloudfront + S3.
 
 ## Prerequisites
 - Domain name is in Route 53
@@ -8,6 +8,7 @@ We deploy a lot of Single Page Applications (mainlyEmber.js) written in Javascri
 
 ## Notes
 - Default to redirect 403 and 404 errors to `index.html`
+- It will also create invalidation when files changed in S3
 
 ## Example Usage
 ```hcl
