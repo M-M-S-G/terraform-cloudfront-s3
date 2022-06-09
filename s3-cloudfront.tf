@@ -160,6 +160,6 @@ resource "aws_route53_record" "route53_record" {
 
 resource "null_resource" "invalidate_cf_cache" {
   provisioner "local-exec" {
-    command = "aws cloudfront create-invalidation --distribution-id ${aws_cloudfront_distribution.s3_distribution.id} --paths '/*'"
+    command = "AWS_PROFILE=${var.aws_profile} aws cloudfront create-invalidation --distribution-id ${aws_cloudfront_distribution.s3_distribution.id} --paths '/*'"
   }
 }

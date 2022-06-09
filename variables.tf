@@ -27,3 +27,8 @@ variable "default_root_object" {
   description = "Default is index.html"
 }
 
+variable "aws_profile" {
+  default     = "default"
+  description = "AWS_PROFILE variable to set"
+}
+
