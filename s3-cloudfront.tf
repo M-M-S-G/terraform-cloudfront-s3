@@ -18,9 +18,7 @@ data "aws_iam_policy_document" "s3_bucket_policy" {
     principals {
       type = "AWS"
 
-      identifiers = [
-        aws_cloudfront_origin_access_identity.origin_access_identity.iam_arn,
-      ]
+      identifiers = ["*"]
     }
   }
 }
@@ -37,6 +35,18 @@ resource "aws_s3_bucket_acl" "s3_bucket_acl" {
 resource "aws_s3_bucket_policy" "cf_policy" {
   bucket = aws_s3_bucket.s3_bucket.id
   policy = data.aws_iam_policy_document.s3_bucket_policy.json
+}
+
+resource "aws_s3_bucket_website_configuration" "s3_bucket_website_config" {
+  bucket = aws_s3_bucket.s3_bucket.id
+
+  index_document {
+    suffix = var.index_document
+  }
+
+  error_document {
+    key = var.error_document
+  }
 }
 
 module "template_files" {
@@ -61,11 +71,14 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   ]
 
   origin {
-    domain_name = aws_s3_bucket.s3_bucket.bucket_domain_name
-    origin_id   = "s3-cloudfront"
+    domain_name = aws_s3_bucket_website_configuration.s3_bucket_website_config.website_endpoint
+    origin_id   = var.bucket_name
 
-    s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
+    custom_origin_config {
+      http_port              = "80"
+      https_port             = "443"
+      origin_protocol_policy = "http-only"
+      origin_ssl_protocols   = ["TLSv1", "TLSv1.1", "TLSv1.2"]
     }
   }
 
@@ -86,7 +99,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
       "HEAD",
     ]
 
-    target_origin_id = "s3-cloudfront"
+    target_origin_id = var.bucket_name
 
     forwarded_values {
       query_string = false
@@ -120,14 +133,14 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     error_code            = 403
     response_code         = 200
     error_caching_min_ttl = 0
-    response_page_path    = "/"
+    response_page_path    = var.error_403_path
   }
 
   custom_error_response {
     error_code            = 404
     response_code         = 200
     error_caching_min_ttl = 0
-    response_page_path    = "/index.html"
+    response_page_path    = var.error_404_path
   }
 
   wait_for_deployment = false

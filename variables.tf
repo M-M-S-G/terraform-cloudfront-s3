@@ -32,3 +32,22 @@ variable "aws_profile" {
   description = "AWS_PROFILE variable to set"
 }
 
+variable "index_document" {
+  default     = "index.html"
+  description = "Default index file"
+}
+
+variable "error_document" {
+  default     = "index.html"
+  description = "Default error file"
+}
+
+variable "error_404_path" {
+  default     = "/index.html"
+  description = "CF 404 error path"
+}
+
+variable "error_403_path" {
+  default     = "/index.html"
+  description = "CF 403 error path"
+}
